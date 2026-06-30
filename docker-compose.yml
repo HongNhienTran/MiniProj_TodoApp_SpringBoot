@@ -1,0 +1,13 @@
+services:
+    postgres:
+      image: postgres:17
+      container_name: todo-postgres
+      restart: unless-stopped
+
+      environment:
+        POSTGRES_DB: todo_db
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        TZ: Asia/Ho_Chi_Minh
+      ports:
+        - "5432:5432"
