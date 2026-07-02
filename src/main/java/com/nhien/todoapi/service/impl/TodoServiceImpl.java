@@ -6,10 +6,13 @@ import com.nhien.todoapi.entity.Todo;
 import com.nhien.todoapi.exception.ResourceNotFoundException;
 import com.nhien.todoapi.repository.TodoRepository;
 import com.nhien.todoapi.service.TodoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class TodoServiceImpl implements TodoService {
@@ -20,11 +23,16 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<TodoResponse> getAllTodos() {
-        return todoRepository.findAll()
-                .stream()
-                .map(this::convertToRespone)
-                .toList();
+    public Page<TodoResponse> getAllTodos(int page, int size,  String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return todoRepository
+                .findAll(pageable)
+                .map(this::convertToRespone);
     }
 
     @Override
