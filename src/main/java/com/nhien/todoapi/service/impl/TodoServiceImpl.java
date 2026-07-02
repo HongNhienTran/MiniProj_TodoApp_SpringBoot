@@ -1,6 +1,9 @@
 package com.nhien.todoapi.service.impl;
 
+import com.nhien.todoapi.dto.TodoRequest;
+import com.nhien.todoapi.dto.TodoResponse;
 import com.nhien.todoapi.entity.Todo;
+import com.nhien.todoapi.exception.ResourceNotFoundException;
 import com.nhien.todoapi.repository.TodoRepository;
 import com.nhien.todoapi.service.TodoService;
 import org.springframework.stereotype.Service;
@@ -17,41 +20,72 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public List<Todo> getAllTodos() {
-        return todoRepository.findAll();
+    public List<TodoResponse> getAllTodos() {
+        return todoRepository.findAll()
+                .stream()
+                .map(this::convertToRespone)
+                .toList();
     }
 
     @Override
-    public Todo getTodoById(Long id) {
-        return todoRepository.findById(id).orElse(null);
+    public TodoResponse getTodoById(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Todo not found"));
+        return convertToRespone(todo);
     }
 
     @Override
-    public Todo createTodo(Todo todo) {
-        todo.setCreatedAt(LocalDateTime.now());
+    public TodoResponse createTodo(TodoRequest request) {
+
+        Todo todo = new Todo();
+
+        todo.setTitle(request.getTitle());
+        todo.setDescription(request.getDescription());
+        todo.setPriority(request.getPriority());
+        todo.setDueDate(request.getDueDate());
         todo.setCompleted(false);
+        todo.setCreatedAt(LocalDateTime.now());
 
-        return todoRepository.save(todo);
+        Todo savedTodo = todoRepository.save(todo);
+
+        return convertToRespone(savedTodo);
     }
 
     @Override
-    public Todo updateTodo(Long id, Todo todo) {
-        Todo existing = todoRepository.findById(id).orElse(null);
-        if (existing != null) {
-            return null;
-        }
+    public TodoResponse updateTodo(Long id, TodoRequest request) {
+        Todo todo = todoRepository.findById(id)
+                        .orElseThrow(() -> new ResourceNotFoundException("Todo not found"));
 
-        existing.setTitle(todo.getTitle());
-        existing.setDescription(todo.getDescription());
-        existing.setPriority(todo.getPriority());
-        existing.setDueDate(todo.getDueDate());
-        existing.setCompleted(todo.getCompleted());
+        todo.setTitle(todo.getTitle());
+        todo.setDescription(todo.getDescription());
+        todo.setPriority(todo.getPriority());
+        todo.setDueDate(todo.getDueDate());
 
-        return todoRepository.save(existing);
+        Todo updatedTodo = todoRepository.save(todo);
+
+        return convertToRespone(updatedTodo);
     }
 
     @Override
     public void deleteTodo(Long id) {
+        Todo todo = todoRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Todo not found"));
+
         todoRepository.deleteById(id);
+    }
+
+    private TodoResponse convertToRespone(Todo todo){
+        TodoResponse response = new TodoResponse();
+
+        response.setId(todo.getId());
+        response.setTitle(todo.getTitle());
+        response.setDescription(todo.getDescription());
+        response.setCompleted(todo.getCompleted());
+        response.setPriority(todo.getPriority());
+        response.setDueDate(todo.getDueDate());
+        response.setCreatedAt(todo.getCreatedAt());
+
+        return response;
     }
 }

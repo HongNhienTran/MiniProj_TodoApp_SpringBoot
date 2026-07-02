@@ -1,8 +1,10 @@
 package com.nhien.todoapi.controller;
 
+import com.nhien.todoapi.dto.TodoRequest;
+import com.nhien.todoapi.dto.TodoResponse;
 import com.nhien.todoapi.entity.Todo;
 import com.nhien.todoapi.service.TodoService;
-import org.springframework.stereotype.Service;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,26 +19,27 @@ public class TodoController {
     }
 
     @GetMapping
-    public List<Todo> getAllTodos() {
+    public List<TodoResponse> getAllTodos() {
         return todoService.getAllTodos();
     }
 
     @GetMapping("/{id}")
-    public Todo getTodoById(@PathVariable Long id){
+    public TodoResponse getTodoById(@PathVariable Long id){
         return todoService.getTodoById(id);
     }
 
     @PostMapping
-    public Todo createTodo(@RequestBody Todo todo){
-        return todoService.createTodo(todo);
+    public TodoResponse createTodo(@Valid @RequestBody TodoRequest request){
+        return todoService.createTodo(request);
     }
 
     @PutMapping("/{id}")
-    public Todo updateTodo(
+    public TodoResponse updateTodo(
             @PathVariable Long id,
-            @RequestBody Todo todo
+            @Valid
+            @RequestBody TodoRequest request
     ){
-        return todoService.updateTodo(id, todo);
+        return todoService.updateTodo(id, request);
     }
 
     @DeleteMapping("/{id}")
