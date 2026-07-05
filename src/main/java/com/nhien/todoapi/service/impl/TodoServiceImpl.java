@@ -8,6 +8,8 @@ import com.nhien.todoapi.exception.ResourceNotFoundException;
 import com.nhien.todoapi.repository.TodoRepository;
 import com.nhien.todoapi.service.TodoService;
 import com.nhien.todoapi.specification.TodoSpecification;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +22,8 @@ import java.time.LocalDateTime;
 @Service
 public class TodoServiceImpl implements TodoService {
     private final TodoRepository todoRepository;
+    private static final Logger log =
+            LoggerFactory.getLogger(TodoServiceImpl.class);
 
     public TodoServiceImpl(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
@@ -29,6 +33,10 @@ public class TodoServiceImpl implements TodoService {
     public Page<TodoResponse> getAllTodos(int page, int size,  String sortBy, String direction) {
         Pageable pageable = buildPageable(page, size, sortBy, direction);
 
+        log.info(
+                "Fetching todos - page = {}, size= {}, sortBy= {}, direction= {}",
+                page, size, sortBy, direction
+        );
         return todoRepository
                 .findAll(pageable)
                 .map(this::convertToResponse);
@@ -36,8 +44,14 @@ public class TodoServiceImpl implements TodoService {
 
     @Override
     public TodoResponse getTodoById(Long id) {
+        log.info("Getting todo with id={}", id);
+
         Todo todo = todoRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Todo not found"));
+                .orElseThrow(() -> {
+                    log.warn("Todo not found with id={}", id);
+                    return new ResourceNotFoundException("Todo not found");
+                });
+
         return convertToResponse(todo);
     }
 
@@ -53,7 +67,12 @@ public class TodoServiceImpl implements TodoService {
         todo.setCompleted(false);
         todo.setCreatedAt(LocalDateTime.now());
 
+        log.info("Creating todo with title= {}", request.getTitle());
         Todo savedTodo = todoRepository.save(todo);
+        log.info(
+                "Todo created successfully with id= {}",
+                savedTodo.getId()
+        );
 
         return convertToResponse(savedTodo);
     }
@@ -61,7 +80,10 @@ public class TodoServiceImpl implements TodoService {
     @Override
     public TodoResponse updateTodo(Long id, TodoRequest request) {
         Todo todo = todoRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("Todo not found"));
+                .orElseThrow(() -> {
+                    log.warn("Todo not found with id={}", id);
+                    return new ResourceNotFoundException("Todo not found");
+                });
 
         todo.setTitle(request.getTitle());
         todo.setDescription(request.getDescription());
@@ -70,20 +92,39 @@ public class TodoServiceImpl implements TodoService {
 
         Todo updatedTodo = todoRepository.save(todo);
 
+        log.info(
+                "Todo updated successfully with id= {}",
+                id
+        );
+
         return convertToResponse(updatedTodo);
     }
 
     @Override
     public void deleteTodo(Long id) {
+        log.info("Deleting todo with id={}", id);
+
         todoRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Todo not found"));
+                .orElseThrow(() -> {
+                    log.warn("Todo not found with id={}", id);
+                    return new ResourceNotFoundException("Todo not found");
+                });
 
         todoRepository.deleteById(id);
+
+        log.info("Todo deleted successfully with id={}", id);
     }
 
     @Override
     public Page<TodoResponse> searchTodos(String title, Boolean completed, Priority priority, int page, int size, String sortBy, String direction) {
+        log.info(
+                "Searching todos: title={}, completed={}, priority={}, page={}, size={}",
+                title,
+                completed,
+                priority,
+                page,
+                size
+        );
         Pageable pageable = buildPageable(page, size, sortBy, direction);
 
         Specification<Todo> spec = (root, query, cb) -> cb.conjunction();
@@ -112,8 +153,9 @@ public class TodoServiceImpl implements TodoService {
 
         }
 
-        Page<Todo> todos =
-                todoRepository.findAll(spec, pageable);
+        Page<Todo> todos = todoRepository.findAll(spec, pageable);
+
+        log.info("Found {} todos", todos.getTotalElements());
 
         return todos.map(this::convertToResponse);
     }
