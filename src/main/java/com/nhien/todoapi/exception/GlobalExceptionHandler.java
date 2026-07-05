@@ -1,8 +1,8 @@
 package com.nhien.todoapi.exception;
 
+import com.nhien.todoapi.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -14,11 +14,15 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleException(ResourceNotFoundException ex) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<ApiResponse<Object>> handleException(
+            ResourceNotFoundException ex) {
 
-        response.put("success", false);
-        response.put("message", ex.getMessage());
+        ApiResponse<Object> response =
+                new ApiResponse<>(
+                        false,
+                        ex.getMessage(),
+                        null
+                );
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -26,21 +30,25 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidation(
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(
             MethodArgumentNotValidException ex) {
 
-        Map<String, Object> errors = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult()
                 .getFieldErrors()
                 .forEach(error ->
-                        errors.put(error.getField(), error.getDefaultMessage()));
+                        errors.put(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        ));
 
-        Map<String, Object> response = new HashMap<>();
-
-        response.put("success", false);
-        response.put("message", "Validation Failed");
-        response.put("errors", errors);
+        ApiResponse<Map<String, String>> response =
+                new ApiResponse<>(
+                        false,
+                        "Validation Failed",
+                        errors
+                );
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)

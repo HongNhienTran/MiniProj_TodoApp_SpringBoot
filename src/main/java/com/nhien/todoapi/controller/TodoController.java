@@ -2,14 +2,14 @@ package com.nhien.todoapi.controller;
 
 import com.nhien.todoapi.dto.TodoRequest;
 import com.nhien.todoapi.dto.TodoResponse;
-import com.nhien.todoapi.entity.Todo;
 import com.nhien.todoapi.entity.enums.Priority;
+import com.nhien.todoapi.response.ApiResponse;
 import com.nhien.todoapi.service.TodoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/todos")
@@ -21,7 +21,7 @@ public class TodoController {
     }
 
     @GetMapping
-    public Page<TodoResponse> getAllTodos(
+    public ResponseEntity<ApiResponse<Page<TodoResponse>>> getAllTodos(
             @RequestParam(defaultValue = "0")
             int page,
             @RequestParam(defaultValue = "10")
@@ -31,35 +31,72 @@ public class TodoController {
             @RequestParam(defaultValue = "asc")
             String direction
     ) {
-        return todoService.getAllTodos(page, size, sortBy, direction);
+        Page<TodoResponse> todos = todoService.getAllTodos(page, size, sortBy, direction);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Todos retrieved successfully",
+                        todos
+                )
+        );
     }
 
     @GetMapping("/{id}")
-    public TodoResponse getTodoById(@PathVariable Long id){
-        return todoService.getTodoById(id);
+    public ResponseEntity<ApiResponse<TodoResponse>> getTodoById(@PathVariable Long id){
+        TodoResponse todo = todoService.getTodoById(id);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Todo retrieved successfully",
+                        todo
+                )
+        );
     }
 
     @PostMapping
-    public TodoResponse createTodo(@Valid @RequestBody TodoRequest request){
-        return todoService.createTodo(request);
+    public ResponseEntity<ApiResponse<TodoResponse>> createTodo(@Valid @RequestBody TodoRequest request){
+        TodoResponse todo = todoService.createTodo(request);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(
+                        new ApiResponse<>(
+                                true,
+                                "Todo created successfully",
+                                todo
+                        )
+                );
     }
 
     @PutMapping("/{id}")
-    public TodoResponse updateTodo(
+    public ResponseEntity<ApiResponse<TodoResponse>> updateTodo(
             @PathVariable Long id,
             @Valid
             @RequestBody TodoRequest request
     ){
-        return todoService.updateTodo(id, request);
+        TodoResponse todo = todoService.updateTodo(id, request);
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Todo updated successfully",
+                        todo
+                )
+        );
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable Long id){
+    public ResponseEntity<ApiResponse<Void>> deleteTodo(@PathVariable Long id){
         todoService.deleteTodo(id);
+
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Todo deleted successfully",
+                        null
+                )
+        );
     }
 
     @GetMapping("/search")
-    public Page<TodoResponse> getTodos(
+    public ResponseEntity<ApiResponse<Page<TodoResponse>>> getTodos(
             @RequestParam(required = false) String  title,
             @RequestParam(required = false) Boolean completed,
             @RequestParam(required = false) Priority priority,
@@ -69,14 +106,23 @@ public class TodoController {
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
             ){
-        return todoService.searchTodos(
-                title,
-                completed,
-                priority,
-                page,
-                size,
-                sortBy,
-                direction
+
+        Page<TodoResponse> todos =
+                todoService.searchTodos(
+                        title,
+                        completed,
+                        priority,
+                        page,
+                        size,
+                        sortBy,
+                        direction
+                );
+        return ResponseEntity.ok(
+                new ApiResponse<>(
+                        true,
+                        "Todos retrieved successfully",
+                        todos
+                )
         );
     }
 }
