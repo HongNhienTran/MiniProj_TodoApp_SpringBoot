@@ -3,6 +3,7 @@ package com.nhien.todoapi.controller;
 import com.nhien.todoapi.dto.TodoRequest;
 import com.nhien.todoapi.dto.TodoResponse;
 import com.nhien.todoapi.entity.Todo;
+import com.nhien.todoapi.entity.enums.Priority;
 import com.nhien.todoapi.service.TodoService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -55,5 +56,27 @@ public class TodoController {
     @DeleteMapping("/{id}")
     public void deleteTodo(@PathVariable Long id){
         todoService.deleteTodo(id);
+    }
+
+    @GetMapping("/search")
+    public Page<TodoResponse> getTodos(
+            @RequestParam(required = false) String  title,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) Priority priority,
+
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+            ){
+        return todoService.searchTodos(
+                title,
+                completed,
+                priority,
+                page,
+                size,
+                sortBy,
+                direction
+        );
     }
 }
