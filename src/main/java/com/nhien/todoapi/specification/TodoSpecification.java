@@ -1,6 +1,7 @@
 package com.nhien.todoapi.specification;
 
 import com.nhien.todoapi.entity.Todo;
+import com.nhien.todoapi.entity.User;
 import com.nhien.todoapi.entity.enums.Priority;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -24,4 +25,8 @@ public class TodoSpecification {
                 cb.equal(root.get("priority"), priority);
     }
 
+    public static Specification<Todo> hasUser(User user) {
+        return (root, query, cb) ->
+                cb.equal(root.get("user"), user);
+    }
 }

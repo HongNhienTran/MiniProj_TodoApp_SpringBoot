@@ -38,4 +38,8 @@ public class Todo {
     @FutureOrPresent(message = "Due date must be today or in the future")
     private LocalDate dueDate;
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
