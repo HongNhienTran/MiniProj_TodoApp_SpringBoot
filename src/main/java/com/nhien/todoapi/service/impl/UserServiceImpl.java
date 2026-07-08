@@ -1,5 +1,8 @@
 package com.nhien.todoapi.service.impl;
 
+import com.nhien.todoapi.dto.user.ChangePasswordRequest;
+import com.nhien.todoapi.dto.user.UpdateProfileRequest;
+import com.nhien.todoapi.dto.user.UserProfileResponse;
 import com.nhien.todoapi.entity.User;
 import com.nhien.todoapi.exception.ResourceNotFoundException;
 import com.nhien.todoapi.repository.UserRepository;
@@ -27,6 +30,21 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found"));
+    }
+
+    @Override
+    public UserProfileResponse getProfile() {
+        return null;
+    }
+
+    @Override
+    public UserProfileResponse updateProfile(UpdateProfileRequest request) {
+        return null;
+    }
+
+    @Override
+    public void changePassword(ChangePasswordRequest request) {
+
     }
 }
 
