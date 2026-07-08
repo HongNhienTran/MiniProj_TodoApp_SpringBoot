@@ -70,6 +70,7 @@ import org.springframework.web.bind.annotation.*;
                 summary = "Create new todo"
         )
         @PostMapping
+        @ResponseStatus(HttpStatus.CREATED)
         public ResponseEntity<ApiResponse<TodoResponse>> createTodo(@Valid @RequestBody TodoRequest request) {
             TodoResponse todo = todoService.createTodo(request);
             return ResponseEntity.status(HttpStatus.CREATED)
