@@ -1,13 +1,28 @@
 services:
-    postgres:
-      image: postgres:17
-      container_name: todo-postgres
-      restart: unless-stopped
+  postgres:
+    image: postgres:17
+    container_name: todo-postgres
+    restart: unless-stopped
 
-      environment:
-        POSTGRES_DB: todo_db
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        TZ: Asia/Ho_Chi_Minh
-      ports:
-        - "5432:5432"
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: todo-backend
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "8080:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/todo_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
