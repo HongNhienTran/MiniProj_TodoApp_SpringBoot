@@ -13,7 +13,8 @@ services:
       - "5432:5432"
 
   backend:
-    build: .
+    build:
+      context: ./backend
     container_name: todo-backend
 
     depends_on:
