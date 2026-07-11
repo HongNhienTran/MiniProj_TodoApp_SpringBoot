@@ -2,39 +2,34 @@
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
 } from "@/components/ui/sidebar";
-
+import { AppHeader } from "@/components/layout/app-header";
+import ProtectedRoute from "@/components/auth/protected-route";
 export default function DashboardLayout({
-  children,
+    children,
 }: {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }) {
-  return (
-    <SidebarProvider>
+    return (
+        <ProtectedRoute>
+        <SidebarProvider>
 
-      <AppSidebar />
+            <AppSidebar />
 
-      <SidebarInset>
+            <SidebarInset>
 
-        <header className="flex h-16 items-center border-b px-6">
+                <AppHeader />
 
-          <SidebarTrigger />
+                <main className="p-6">
+                    {children}
+                </main>
 
-          <h1 className="ml-4 text-xl font-semibold">
-            Todo Dashboard
-          </h1>
+            </SidebarInset>
 
-        </header>
-
-        <main className="p-6">
-          {children}
-        </main>
-
-      </SidebarInset>
-
-    </SidebarProvider>
-  );
+        </SidebarProvider>
+        </ProtectedRoute>
+    );
 }

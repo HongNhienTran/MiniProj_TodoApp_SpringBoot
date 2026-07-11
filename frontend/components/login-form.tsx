@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react"
 import { login } from "@/services/auth.service"
 import { toast } from "sonner";
+import { setAccessToken } from "@/lib/auth";
 
 export function LoginForm({
   className,
@@ -41,7 +42,7 @@ export function LoginForm({
 
       const token = response.token;
 
-      localStorage.setItem("access_token", token);
+      setAccessToken(token);
 
       toast.success("Login successfully");
 

@@ -1,83 +1,32 @@
 "use client";
 
-import {
-  LayoutDashboard,
-  CheckSquare,
-  User,
-  LogOut,
-} from "lucide-react";
+import { AppLogo } from "./app-logo";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarFooter,
+  SidebarHeader,
 } from "@/components/ui/sidebar";
-
-const items = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Todos",
-    url: "/todos",
-    icon: CheckSquare,
-  },
-  {
-    title: "Profile",
-    url: "/profile",
-    icon: User,
-  },
-  {
-    title: "Logout",
-    url: "#",
-    icon: LogOut,
-  },
-];
 
 export function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
+
+      <SidebarHeader className="border-b">
+        <AppLogo />
+      </SidebarHeader>
+
       <SidebarContent>
-
-        <SidebarGroup>
-
-          <SidebarGroupLabel>
-            Todo App
-          </SidebarGroupLabel>
-
-          <SidebarGroupContent>
-
-            <SidebarMenu>
-
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-
-                  <SidebarMenuButton asChild>
-
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-
-                  </SidebarMenuButton>
-
-                </SidebarMenuItem>
-              ))}
-
-            </SidebarMenu>
-
-          </SidebarGroupContent>
-
-        </SidebarGroup>
-
+        <NavMain />
       </SidebarContent>
+
+      <SidebarFooter className="border-t">
+        <NavUser />
+      </SidebarFooter>
+
     </Sidebar>
   );
 }
