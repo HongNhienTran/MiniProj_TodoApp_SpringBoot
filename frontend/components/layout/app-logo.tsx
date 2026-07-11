@@ -9,11 +9,10 @@ export function AppLogo() {
       href="/dashboard"
       className="flex items-center gap-2"
     >
-      <CheckSquare className="h-6 w-6 text-primary" />
-
-      <span className="text-lg font-bold">
-        TodoApp
-      </span>
+      <img
+        src="favicon.ico"
+        alt="TodoApp Logo"
+      />
     </Link>
   );
 }

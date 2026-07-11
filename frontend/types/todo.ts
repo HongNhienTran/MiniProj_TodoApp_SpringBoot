@@ -4,24 +4,13 @@ export interface Todo {
   description: string;
   completed: boolean;
   priority: "LOW" | "MEDIUM" | "HIGH";
+  dueDate: string;
   createdAt: string;
-}
-
-export interface TodoPageResponse {
-  content: Todo[];
-
-  totalElements: number;
-
-  totalPages: number;
-
-  number: number;
-
-  size: number;
 }
 
 export interface TodoRequest {
   title: string;
   description: string;
   priority: "LOW" | "MEDIUM" | "HIGH";
-  completed?: boolean;
+  dueDate: string;
 }

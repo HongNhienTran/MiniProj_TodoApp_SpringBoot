@@ -4,12 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import {
-  LayoutDashboard,
-  CheckSquare,
-  User,
-} from "lucide-react";
-
-import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -18,19 +12,12 @@ import {
 const items = [
   {
     title: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    href: "/dashboard"
   },
   {
     title: "Todos",
-    href: "/todos",
-    icon: CheckSquare,
-  },
-  {
-    title: "Profile",
-    href: "/profile",
-    icon: User,
-  },
+    href: "/todos"
+  }
 ];
 
 export function NavMain() {
@@ -45,7 +32,6 @@ export function NavMain() {
             isActive={pathname === item.href}
           >
             <Link href={item.href}>
-              <item.icon />
               <span>{item.title}</span>
             </Link>
           </SidebarMenuButton>
