@@ -4,3 +4,7 @@ export interface UserProfile {
     email: string;
     role: string;
 }
+
+export interface UpdateProfileRequest {
+  fullName: string;
+}
