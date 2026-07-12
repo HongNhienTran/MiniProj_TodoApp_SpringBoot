@@ -1,19 +1,22 @@
 "use client";
 
+import { useState } from "react";
+import { isSameDay } from "date-fns";
+
 import { StatsCard } from "@/components/dashboard/stats-card";
 import { TaskCalendar } from "@/components/dashboard/task-calendar";
 import { UpcomingTask } from "@/components/dashboard/upcoming-task";
+import { TasksSelectedDate } from "@/components/dashboard/tasks-selected-date";
 
 import { useTodos } from "@/hooks/use-todos";
 
 export default function DashboardPage() {
+  const [selectedDate, setSelectedDate] =
+    useState(new Date());
 
-  const { data, isLoading } = useTodos({
-
+  const { data } = useTodos({
     page: 0,
-
     size: 1000,
-
   });
 
   const todos = data?.content ?? [];
@@ -21,41 +24,37 @@ export default function DashboardPage() {
   const total = todos.length;
 
   const completed = todos.filter(
-
-    t => t.completed
-
+    (t) => t.completed
   ).length;
 
   const pending = todos.filter(
-
-    t => !t.completed
-
+    (t) => !t.completed
   ).length;
 
   const high = todos.filter(
-
-    t => t.priority === "HIGH"
-
+    (t) => t.priority === "HIGH"
   ).length;
 
-  return (
+  const todayTasks = todos.filter((t) => {
+    if (!t.dueDate) return false;
 
+    return isSameDay(
+      new Date(t.dueDate),
+      selectedDate
+    );
+  });
+
+  return (
     <div className="space-y-6">
 
       <div>
-
         <h1 className="text-3xl font-bold">
-
           Dashboard
-
         </h1>
 
         <p className="text-muted-foreground">
-
           Welcome back!
-
         </p>
-
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
@@ -82,22 +81,30 @@ export default function DashboardPage() {
 
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-4">
+      <div className="grid gap-4 lg:grid-cols-3">
 
         <div className="lg:col-span-2">
-
-          <TaskCalendar />
-
+          <TaskCalendar
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+          />
         </div>
 
-        <UpcomingTask
-          todos={todos.slice(0, 5)}
-        />
+        <div>
+
+          <UpcomingTask
+            todos={todos.slice(0, 5)}
+          />
+
+          <TasksSelectedDate
+            date={selectedDate}
+            todos={todayTasks}
+          />
+
+        </div>
 
       </div>
 
     </div>
-
-  )
-
+  );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import {
@@ -47,20 +46,20 @@ export function TodoFilter({
   setDirection,
 }: Props) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap gap-3">
 
       <Input
-        placeholder="Search title..."
         className="w-72"
+        placeholder="Search title..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
 
       <Select
-        value={priority ?? "ALL"}
+        value={priority ?? ""}
         onValueChange={(value) =>
           setPriority(
-            value === "ALL"
+            value === ""
               ? undefined
               : (value as "LOW" | "MEDIUM" | "HIGH")
           )
@@ -71,7 +70,7 @@ export function TodoFilter({
         </SelectTrigger>
 
         <SelectContent>
-          <SelectItem value="ALL">All Priority</SelectItem>
+          <SelectItem value="">All Priority</SelectItem>
           <SelectItem value="LOW">Low</SelectItem>
           <SelectItem value="MEDIUM">Medium</SelectItem>
           <SelectItem value="HIGH">High</SelectItem>
@@ -81,16 +80,16 @@ export function TodoFilter({
       <Select
         value={
           completed === undefined
-            ? "ALL"
+            ? ""
             : completed
-            ? "TRUE"
-            : "FALSE"
+            ? "true"
+            : "false"
         }
         onValueChange={(value) => {
-          if (value === "ALL") {
+          if (value === "") {
             setCompleted(undefined);
           } else {
-            setCompleted(value === "TRUE");
+            setCompleted(value === "true");
           }
         }}
       >
@@ -99,9 +98,13 @@ export function TodoFilter({
         </SelectTrigger>
 
         <SelectContent>
-          <SelectItem value="ALL">All Status</SelectItem>
-          <SelectItem value="TRUE">Completed</SelectItem>
-          <SelectItem value="FALSE">Pending</SelectItem>
+          <SelectItem value="">All Status</SelectItem>
+          <SelectItem value="true">
+            Completed
+          </SelectItem>
+          <SelectItem value="false">
+            Pending
+          </SelectItem>
         </SelectContent>
       </Select>
 
@@ -152,10 +155,6 @@ export function TodoFilter({
           </SelectItem>
         </SelectContent>
       </Select>
-
-      <Button>
-        Search
-      </Button>
 
     </div>
   );

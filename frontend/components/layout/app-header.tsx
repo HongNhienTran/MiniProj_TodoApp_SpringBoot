@@ -14,9 +14,7 @@ export function AppHeader() {
 
                 <h1 className="text-xl font-semibold">
 
-                    Welcome,
-
-                    {profile?.fullName}
+                    Welcome, {profile?.fullName}
 
                 </h1>
 
